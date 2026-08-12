@@ -3,14 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PRO_3941 CHAOS ENGINE 😂</title>
+
+<title>PRO_3941 CHAOS ENGINE</title>
 
 <style>
 * {
     box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
     margin: 0;
     width: 100%;
     height: 100%;
@@ -26,24 +28,31 @@ body {
 }
 
 /* MATRIX */
+
 #matrix {
     position: fixed;
     inset: 0;
     z-index: 0;
-    opacity: .16;
+
+    opacity: .15;
     pointer-events: none;
+
     overflow: hidden;
+    word-break: break-all;
+
     font-size: 13px;
     line-height: 14px;
-    word-break: break-all;
 }
 
 /* HUD */
+
 #hud {
     position: fixed;
     left: 20px;
     bottom: 20px;
-    z-index: 5;
+
+    z-index: 10;
+
     text-shadow: 0 0 8px #39ff14;
 }
 
@@ -57,24 +66,33 @@ body {
     font-size: 13px;
 }
 
-/* AUDIO */
+/* AUDIO PANEL */
+
 #audioHud {
     position: fixed;
-    right: 20px;
+
     top: 20px;
-    width: 260px;
+    right: 20px;
+
+    width: 270px;
+
     padding: 15px;
+
     z-index: 1000;
 
-    background: rgba(0,0,0,.9);
-    border: 2px solid #39ff14;
-    box-shadow: 0 0 20px rgba(57,255,20,.4);
-
     text-align: center;
+
+    background: rgba(0,0,0,.92);
+
+    border: 2px solid #39ff14;
+
+    box-shadow:
+        0 0 15px rgba(57,255,20,.4);
 }
 
 #soundBtn {
     width: 100%;
+
     margin-top: 10px;
     padding: 10px;
 
@@ -95,9 +113,525 @@ body {
     color: #39ff14;
 }
 
-/* POPUPS */
+/* POPUP */
+
 .troll {
     position: fixed;
+
+    width: 280px;
+    min-height: 310px;
+
+    padding: 20px;
+
+    background: #f5f5f5;
+    color: #111;
+
+    border: 3px solid #39ff14;
+    border-radius: 10px;
+
+    box-shadow:
+        0 0 10px #39ff14,
+        0 0 30px rgba(57,255,20,.5);
+
+    z-index: 100;
+
+    text-align: center;
+
+    user-select: none;
+}
+
+.troll h2 {
+    margin: 0 0 10px;
+    font-size: 23px;
+}
+
+.troll .face {
+    display: block;
+
+    width: 120px;
+    height: 120px;
+
+    margin: 10px auto;
+
+    object-fit: cover;
+
+    border-radius: 8px;
+
+    border: 2px solid #111;
+
+    box-shadow: 0 0 12px #39ff14;
+}
+
+.troll p {
+    margin: 8px;
+    font-weight: bold;
+}
+
+/* CLOSE */
+
+.close {
+    position: absolute;
+
+    top: 6px;
+    right: 7px;
+
+    padding: 3px 7px;
+
+    background: #111;
+    color: white;
+
+    border: 0;
+
+    font-family: monospace;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.close:hover {
+    background: #39ff14;
+    color: #000;
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    #audioHud {
+        top: 10px;
+        right: 10px;
+        width: 205px;
+        font-size: 11px;
+    }
+
+    .troll {
+        width: 240px;
+        min-height: 285px;
+    }
+
+    .troll .face {
+        width: 100px;
+        height: 100px;
+    }
+
+    #hud {
+        left: 10px;
+        bottom: 10px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- MATRIX -->
+<div id="matrix"></div>
+
+
+<!-- ==================================================
+     CHAOS AUDIO
+================================================== -->
+
+<audio
+    id="chaosAudio"
+    preload="auto"
+    loop
+    src="./chaos.mp3">
+</audio>
+
+
+<!-- AUDIO CONTROL -->
+
+<div id="audioHud">
+
+    <b>◉ PRO_3941 AUDIO SYSTEM</b>
+
+    <button id="soundBtn">
+        🔊 ENABLE CHAOS AUDIO
+    </button>
+
+    <div
+        id="audioStatus"
+        style="margin-top:8px;font-size:12px;"
+    >
+        STATUS: WAITING 🔇
+    </div>
+
+</div>
+
+
+<!-- HUD -->
+
+<div id="hud">
+
+    <h1>
+        &gt; PRO_3941 CHAOS ENGINE 😂
+    </h1>
+
+    <div id="status">
+        &gt; SYSTEM STATUS: READY
+    </div>
+
+    <div id="counter">
+        &gt; POPUPS: 0
+    </div>
+
+</div>
+
+
+<script>
+
+/* ==================================================
+   CONFIG
+================================================== */
+
+const IMAGE_FILE = "./face.png";
+
+const AUDIO_FILE = "./chaos.mp3";
+
+const POPUP_INTERVAL = 20000;
+
+const popups = [];
+
+
+/* ==================================================
+   MATRIX
+================================================== */
+
+const chars =
+    "01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%@";
+
+let matrixText = "";
+
+for (let i = 0; i < 5000; i++) {
+
+    matrixText +=
+        chars[
+            Math.floor(
+                Math.random() * chars.length
+            )
+        ];
+
+}
+
+document.getElementById("matrix")
+    .textContent = matrixText;
+
+
+/* ==================================================
+   COUNTER
+================================================== */
+
+function updateCounter() {
+
+    document.getElementById("counter")
+        .textContent =
+        "> POPUPS: " + popups.length;
+
+}
+
+
+/* ==================================================
+   CREATE POPUP
+================================================== */
+
+function createPopup() {
+
+    const popup =
+        document.createElement("div");
+
+    popup.className = "troll";
+
+    popup.innerHTML = `
+        <button class="close">X</button>
+
+        <h2>
+            YOU ARE AN IDIOT 😂
+        </h2>
+
+        <img
+            class="face"
+            src="${IMAGE_FILE}"
+            alt="Chaos Face"
+        >
+
+        <p>
+            HAHA LOSER 💀
+        </p>
+
+        <small>
+            READ THE TXT LULZ 😂
+        </small>
+    `;
+
+    document.body.appendChild(popup);
+
+
+    const obj = {
+
+        el: popup,
+
+        x:
+            Math.random() *
+            Math.max(
+                1,
+                window.innerWidth - 300
+            ),
+
+        y:
+            Math.random() *
+            Math.max(
+                1,
+                window.innerHeight - 350
+            ),
+
+        dx:
+            (Math.random() > 0.5 ? 1 : -1) *
+            (1.5 + Math.random() * 2.5),
+
+        dy:
+            (Math.random() > 0.5 ? 1 : -1) *
+            (1.5 + Math.random() * 2.5)
+    };
+
+
+    popups.push(obj);
+
+    updateCounter();
+
+
+    /* X BUTTON */
+
+    popup
+        .querySelector(".close")
+        .addEventListener("click", () => {
+
+            popup.remove();
+
+            const index =
+                popups.indexOf(obj);
+
+            if (index !== -1) {
+                popups.splice(index, 1);
+            }
+
+            /* Two replacement popups */
+
+            createPopup();
+            createPopup();
+
+            updateCounter();
+
+        });
+
+}
+
+
+/* ==================================================
+   BOUNCING ENGINE
+================================================== */
+
+function animate() {
+
+    for (const popup of popups) {
+
+        if (!popup.el.isConnected) {
+            continue;
+        }
+
+        const maxX =
+            Math.max(
+                0,
+                window.innerWidth -
+                popup.el.offsetWidth
+            );
+
+        const maxY =
+            Math.max(
+                0,
+                window.innerHeight -
+                popup.el.offsetHeight
+            );
+
+
+        popup.x += popup.dx;
+        popup.y += popup.dy;
+
+
+        if (popup.x <= 0) {
+
+            popup.x = 0;
+            popup.dx *= -1;
+
+        }
+
+        if (popup.x >= maxX) {
+
+            popup.x = maxX;
+            popup.dx *= -1;
+
+        }
+
+        if (popup.y <= 0) {
+
+            popup.y = 0;
+            popup.dy *= -1;
+
+        }
+
+        if (popup.y >= maxY) {
+
+            popup.y = maxY;
+            popup.dy *= -1;
+
+        }
+
+
+        popup.el.style.left =
+            popup.x + "px";
+
+        popup.el.style.top =
+            popup.y + "px";
+
+    }
+
+
+    requestAnimationFrame(animate);
+
+}
+
+
+/* ==================================================
+   AUDIO
+================================================== */
+
+const audio =
+    document.getElementById("chaosAudio");
+
+const soundBtn =
+    document.getElementById("soundBtn");
+
+const audioStatus =
+    document.getElementById("audioStatus");
+
+
+/* Explicit source */
+
+audio.src = AUDIO_FILE;
+
+
+/* Detect missing/broken MP3 */
+
+audio.addEventListener("error", () => {
+
+    console.error(
+        "Could not load:",
+        AUDIO_FILE
+    );
+
+    audioStatus.textContent =
+        "STATUS: chaos.mp3 NOT FOUND ❌";
+
+});
+
+
+/* Play after user interaction */
+
+soundBtn.addEventListener("click", async () => {
+
+    try {
+
+        audio.currentTime = 0;
+
+        await audio.play();
+
+        audioStatus.textContent =
+            "STATUS: LOOPING 🔊";
+
+        soundBtn.textContent =
+            "🔊 CHAOS AUDIO ENABLED";
+
+        document.getElementById("status")
+            .textContent =
+            "> CHAOS AUDIO ONLINE 😂";
+
+    } catch (error) {
+
+        console.error(
+            "Audio error:",
+            error
+        );
+
+        audioStatus.textContent =
+            "STATUS: AUDIO ERROR ❌";
+
+    }
+
+});
+
+
+/* ==================================================
+   START ENGINE
+================================================== */
+
+createPopup();
+
+animate();
+
+
+/* ==================================================
+   NEW POPUP EVERY 20 SECONDS
+================================================== */
+
+setInterval(() => {
+
+    createPopup();
+
+}, POPUP_INTERVAL);
+
+
+/* ==================================================
+   WINDOW RESIZE
+================================================== */
+
+window.addEventListener("resize", () => {
+
+    for (const popup of popups) {
+
+        const maxX =
+            Math.max(
+                0,
+                window.innerWidth -
+                popup.el.offsetWidth
+            );
+
+        const maxY =
+            Math.max(
+                0,
+                window.innerHeight -
+                popup.el.offsetHeight
+            );
+
+        popup.x =
+            Math.min(
+                popup.x,
+                maxX
+            );
+
+        popup.y =
+            Math.min(
+                popup.y,
+                maxY
+            );
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>    position: fixed;
 
     width: 280px;
     min-height: 310px;
