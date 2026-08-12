@@ -1,928 +1,623 @@
-<script>
+:::writing{variant="document" id="58321" title="PRO_3941 CHAOS ENGINE — Remade Original Script"}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PRO_3941 CHAOS ENGINE</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    background: #000;
+    color: #39ff14;
+
+    font-family: "Courier New", monospace;
+}
+
+body {
+    background:
+        radial-gradient(
+            ellipse at center,
+            #09200d 0%,
+            #020803 35%,
+            #000 78%
+        );
+}
 
 /* =====================================================
-   CHAOS AUDIO
+   MATRIX BACKGROUND
 ===================================================== */
 
-const audio = document.getElementById("chaosAudio");
-const playBtn = document.getElementById("playBtn");
-const audioStatus = document.getElementById("audioStatus");
-const timer = document.getElementById("timer");
-const waveform = document.getElementById("waveform");
+#matrix {
+    position: fixed;
+    inset: 0;
 
-/* Volume */
-audio.volume = 1;
+    z-index: 0;
 
-/* Audio loaded */
-audio.addEventListener("loadedmetadata", () => {
-    audioStatus.textContent = "MP3 READY 🔊";
-});
-
-/* Playing */
-audio.addEventListener("playing", () => {
-
-    audioStatus.textContent =
-        "CHAOS AUDIO ACTIVE 🔊";
-
-    waveform.classList.add("playing");
-
-    playBtn.textContent =
-        "⏸ PAUSE CHAOS AUDIO";
-});
-
-/* Paused */
-audio.addEventListener("pause", () => {
-
-    waveform.classList.remove("playing");
-
-    playBtn.textContent =
-        "▶ PLAY CHAOS AUDIO";
-
-    if (!audio.ended) {
-        audioStatus.textContent =
-            "PAUSED ⏸️";
-    }
-});
-
-/* Error */
-audio.addEventListener("error", () => {
-
-    waveform.classList.remove("playing");
-
-    audioStatus.textContent =
-        "MP3 LOAD ERROR ❌";
-
-    console.error(
-        "Audio error:",
-        audio.error
-    );
-});
-
-/* Play / pause */
-playBtn.addEventListener("click", async () => {
-
-    if (audio.paused) {
-
-        try {
-
-            await audio.play();
-
-        } catch (error) {
-
-            console.error(
-                "Playback failed:",
-                error
-            );
-
-            audioStatus.textContent =
-                "PLAYBACK ERROR ❌";
-        }
-
-    } else {
-
-        audio.pause();
-
-    }
-
-});
-
-/* Timer */
-audio.addEventListener("timeupdate", () => {
-
-    const seconds =
-        Math.floor(audio.currentTime);
-
-    const mins =
-        String(
-            Math.floor(seconds / 60)
-        ).padStart(2, "0");
-
-    const secs =
-        String(
-            seconds % 60
-        ).padStart(2, "0");
-
-    timer.textContent =
-        mins + ":" + secs;
-
-});
-
-</script>
-.troll-card .close-btn {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    width: 22px;
-    height: 22px;
-    background: #000;
-    color: #fff;
-    border: 1px solid #39ff14;
-    font-size: 12px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.troll-card .close-btn:hover {
-    background: #39ff14;
-    color: #000;
-}
-
-.troll-card h2 {
-    margin: 15px 0 10px;
-    font-size: 22px;
-    font-weight: 900;
-    letter-spacing: 1px;
-}
-
-.troll-card img {
-    width: 100px;
-    height: auto;
-    margin: 10px 0;
-}
-
-.troll-card .btn-loser {
-    display: block;
-    width: 80%;
-    margin: 10px auto 5px;
-    padding: 8px;
-    background: #39ff14;
-    border: 2px solid #000;
-    font-weight: bold;
-    font-size: 14px;
-    cursor: pointer;
-    box-shadow: 0 0 10px rgba(57, 255, 20, 0.8);
-}
-
-/* ARROWS */
-.arrow {
-    position: absolute;
-    color: #39ff14;
-    font-size: 45px;
-    font-weight: bold;
-    text-shadow: 0 0 10px #39ff14;
+    overflow: hidden;
     pointer-events: none;
-}
 
-.arrow-n  { top: -60px; left: 50%; transform: translateX(-50%); }
-.arrow-ne { top: -45px; right: -45px; }
-.arrow-e  { right: -60px; top: 50%; transform: translateY(-50%); }
-.arrow-se { bottom: -45px; right: -45px; }
-.arrow-s  { bottom: -60px; left: 50%; transform: translateX(-50%); }
-.arrow-sw { bottom: -45px; left: -45px; }
-.arrow-w  { left: -60px; top: 50%; transform: translateY(-50%); }
-.arrow-nw { top: -45px; left: -45px; }
-
-/* ================================
-   AUDIO PANEL (TOP RIGHT)
-================================ */
-
-#audioHud {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 270px;
-    padding: 12px 15px;
-    z-index: 1000;
-    background: rgba(0, 0, 0, 0.9);
-    border: 2px solid #39ff14;
-    box-shadow: 0 0 10px rgba(57,255,20,0.5);
-}
-
-.audio-header {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    border-bottom: 1px solid #39ff14;
-    padding-bottom: 4px;
-    margin-bottom: 10px;
-}
-
-.audio-body {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.mask-icon {
-    width: 35px;
-    height: 35px;
-    border: 1px solid #39ff14;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-}
-
-.waveform {
-    flex-grow: 1;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    gap: 3px;
-}
-
-.wave-bar {
-    width: 4px;
-    height: 30%;
-    background: #39ff14;
-    box-shadow: 0 0 4px #39ff14;
-    transition: height 0.1s ease;
-}
-
-.playing .wave-bar {
-    animation: wave 0.8s infinite ease-in-out alternate;
-}
-
-.playing .wave-bar:nth-child(1) { animation-delay: 0.1s; }
-.playing .wave-bar:nth-child(2) { animation-delay: 0.3s; }
-.playing .wave-bar:nth-child(3) { animation-delay: 0.2s; }
-.playing .wave-bar:nth-child(4) { animation-delay: 0.5s; }
-.playing .wave-bar:nth-child(5) { animation-delay: 0.4s; }
-
-@keyframes wave {
-    0% { height: 20%; }
-    100% { height: 100%; }
-}
-
-.audio-footer {
-    display: flex;
-    justify-content: space-between;
-    font-size: 10px;
-    margin-top: 10px;
-}
-
-#playBtn {
-    width: 100%;
-    margin-top: 8px;
-    padding: 6px;
-    background: #39ff14;
-    color: #000;
-    border: none;
-    font-family: inherit;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-#playBtn:hover {
-    background: #fff;
-}
-
-/* ================================
-   HUD & PROGRESS (TEXT FROM IMAGE)
-================================ */
-
-#hud {
-    position: fixed;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
-    width: 480px;
-    max-width: 90vw;
-    text-shadow: 0 0 8px #39ff14;
-}
-
-#hud h2 {
-    margin: 0 0 12px;
-    font-size: 20px;
-    letter-spacing: 1px;
-}
-
-.console-line {
-    font-size: 14px;
-    margin: 6px 0;
-    opacity: 0.95;
-}
-
-.progress-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 20px;
-    font-size: 13px;
-}
-
-.progress-bar-border {
-    flex-grow: 1;
-    height: 18px;
-    border: 1px solid #39ff14;
-    padding: 1px;
-}
-
-.progress-bar-fill {
-    height: 100%;
-    width: 100%;
-    background: #39ff14;
-    box-shadow: 0 0 8px #39ff14;
-}
-
-/* CORNER TAGS */
-.tag-left {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    border: 1px solid #39ff14;
-    padding: 6px 12px;
-    font-size: 12px;
-    text-shadow: 0 0 5px #39ff14;
-}
-
-.tag-right {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    display: flex;
-    gap: 15px;
-    font-size: 16px;
-    text-shadow: 0 0 5px #39ff14;
-}
-</style>
-</head>
-
-<body>
-
-<div id="matrix"></div>
-<div class="mask-overlay"></div>
-<div class="skull-overlay"></div>
-
-<audio id="chaosAudio" src="Pro_3941 Chaos Mode (2).mp3" preload="auto" loop></audio>
-
-<div id="audioHud">
-    <div class="audio-header">
-        <span>AUDIO</span>
-        <span>— ▢ ✕</span>
-    </div>
-    <div class="audio-body">
-        <div class="mask-icon">🎭</div>
-        <div class="waveform" id="waveform">
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
-        </div>
-    </div>
-    <button id="playBtn">▶ PLAY CHAOS AUDIO</button>
-    <div class="audio-footer">
-        <span id="audioStatus">HACKER SOUND ACTIVE</span>
-        <span id="timer">00:07</span>
-    </div>
-</div>
-
-<div class="troll-container">
-    <div class="arrow arrow-n">↑</div>
-    <div class="arrow arrow-ne">↗</div>
-    <div class="arrow arrow-e">→</div>
-    <div class="arrow arrow-se">↘</div>
-    <div class="arrow arrow-s">↓</div>
-    <div class="arrow arrow-sw">↙</div>
-    <div class="arrow arrow-w">←</div>
-    <div class="arrow arrow-nw">↖</div>
-
-    <div class="troll-card">
-        <button class="close-btn">✕</button>
-        <h2>YOU ARE AN IDIOT</h2>
-        <img src="https://upload.wikimedia.org/wikipedia/en/9/9a/Trollface_non-free.png" alt="Trollface">
-        <button class="btn-loser">HAHA LOSER 😂</button>
-    </div>
-</div>
-
-<div id="hud">
-    <h2>&gt; SYSTEM HACKED BY PRO_3941</h2>
-    <div class="console-line">&gt; YOUR BRAIN = 0</div>
-    <div class="console-line">&gt; SKILL = -100</div>
-    <div class="console-line">&gt; YOU JUST GOT TROLLED 😂</div>
-
-    <div class="progress-container">
-        <span>TROLLING...</span>
-        <div class="progress-bar-border">
-            <div class="progress-bar-fill"></div>
-        </div>
-        <span>100%</span>
-    </div>
-</div>
-
-<div class="tag-left">PRO_3941 LABS</div>
-<div class="tag-right">
-    <span>🔊</span>
-    <span>&gt;--</span>
-</div>
-
-<script>
-/* Matrix Background */
-const matrixContainer = document.getElementById("matrix");
-const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%@";
-let matrixText = "";
-for (let i = 0; i < 4000; i++) {
-    matrixText += chars[Math.floor(Math.random() * chars.length)];
-    if (i % 80 === 0) matrixText += "\n";
-}
-matrixContainer.textContent = matrixText;
-
-/* Audio Controller */
-const audio = document.getElementById("chaosAudio");
-const playBtn = document.getElementById("playBtn");
-const audioStatus = document.getElementById("audioStatus");
-const timerEl = document.getElementById("timer");
-const waveform = document.getElementById("waveform");
-
-async function playAudio() {
-    try {
-        await audio.play();
-        playBtn.textContent = "⏸ PAUSE CHAOS AUDIO";
-        audioStatus.textContent = "HACKER SOUND ACTIVE";
-        waveform.classList.add("playing");
-    } catch (err) {
-        console.error("Playback error:", err);
-        audioStatus.textContent = "PLAYBACK BLOCKED ❌";
-    }
-}
-
-playBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    if (audio.paused) {
-        playAudio();
-    } else {
-        audio.pause();
-        playBtn.textContent = "▶ PLAY CHAOS AUDIO";
-        audioStatus.textContent = "PAUSED";
-        waveform.classList.remove("playing");
-    }
-});
-
-document.addEventListener("click", () => {
-    if (audio.paused && audioStatus.textContent !== "PAUSED") {
-        playAudio();
-    }
-}, { once: true });
-
-audio.addEventListener("timeupdate", () => {
-    const totalSecs = Math.floor(audio.currentTime);
-    const mins = String(Math.floor(totalSecs / 60)).padStart(2, '0');
-    const secs = String(totalSecs % 60).padStart(2, '0');
-    timerEl.textContent = `${mins}:${secs}`;
-});
-</script>
-
-</body>
-</html>
-
-.troll-card .close-btn:hover {
-    background: #39ff14;
-    color: #000;
-}
-
-.troll-card h2 {
-    margin: 15px 0 10px;
-    font-size: 22px;
-    font-weight: 900;
-    letter-spacing: 1px;
-}
-
-.troll-card img {
-    width: 100px;
-    height: auto;
-    margin: 10px 0;
-}
-
-.troll-card .btn-loser {
-    display: block;
-    width: 80%;
-    margin: 10px auto 5px;
-    padding: 8px;
-    background: #39ff14;
-    border: 2px solid #000;
-    font-weight: bold;
-    font-size: 14px;
-    cursor: pointer;
-    box-shadow: 0 0 10px rgba(57, 255, 20, 0.8);
-}
-
-/* ARROWS */
-.arrow {
-    position: absolute;
     color: #39ff14;
-    font-size: 45px;
-    font-weight: bold;
-    text-shadow: 0 0 10px #39ff14;
+    opacity: .23;
+
+    font-size: 12px;
+    line-height: 14px;
+
+    word-break: break-all;
+
+    text-shadow:
+        0 0 5px #39ff14,
+        0 0 12px rgba(57,255,20,.5);
+}
+
+/* =====================================================
+   SCANLINES
+===================================================== */
+
+#scanlines {
+    position: fixed;
+    inset: 0;
+
+    z-index: 1;
+
     pointer-events: none;
+
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            transparent 0px,
+            transparent 3px,
+            rgba(57,255,20,.035) 4px,
+            transparent 5px
+        );
 }
 
-.arrow-n  { top: -60px; left: 50%; transform: translateX(-50%); }
-.arrow-ne { top: -45px; right: -45px; }
-.arrow-e  { right: -60px; top: 50%; transform: translateY(-50%); }
-.arrow-se { bottom: -45px; right: -45px; }
-.arrow-s  { bottom: -60px; left: 50%; transform: translateX(-50%); }
-.arrow-sw { bottom: -45px; left: -45px; }
-.arrow-w  { left: -60px; top: 50%; transform: translateY(-50%); }
-.arrow-nw { top: -45px; left: -45px; }
+/* =====================================================
+   VIGNETTE
+===================================================== */
 
-/* ================================
-   AUDIO PANEL (TOP RIGHT)
-================================ */
-
-#audioHud {
+#vignette {
     position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 270px;
-    padding: 12px 15px;
-    z-index: 1000;
-    background: rgba(0, 0, 0, 0.9);
-    border: 2px solid #39ff14;
-    box-shadow: 0 0 10px rgba(57,255,20,0.5);
+    inset: 0;
+
+    z-index: 2;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            transparent 35%,
+            rgba(0,0,0,.82) 100%
+        );
 }
 
-.audio-header {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    border-bottom: 1px solid #39ff14;
-    padding-bottom: 4px;
-    margin-bottom: 10px;
-}
+/* =====================================================
+   ANONYMOUS CENTER
+===================================================== */
 
-.audio-body {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.mask-icon {
-    width: 35px;
-    height: 35px;
-    border: 1px solid #39ff14;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-}
-
-.waveform {
-    flex-grow: 1;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    gap: 3px;
-}
-
-.wave-bar {
-    width: 4px;
-    height: 30%;
-    background: #39ff14;
-    box-shadow: 0 0 4px #39ff14;
-    transition: height 0.1s ease;
-}
-
-/* Dynamic visualizer animation state */
-.playing .wave-bar {
-    animation: wave 0.8s infinite ease-in-out alternate;
-}
-
-.playing .wave-bar:nth-child(1) { animation-delay: 0.1s; }
-.playing .wave-bar:nth-child(2) { animation-delay: 0.3s; }
-.playing .wave-bar:nth-child(3) { animation-delay: 0.2s; }
-.playing .wave-bar:nth-child(4) { animation-delay: 0.5s; }
-.playing .wave-bar:nth-child(5) { animation-delay: 0.4s; }
-
-@keyframes wave {
-    0% { height: 20%; }
-    100% { height: 100%; }
-}
-
-.audio-footer {
-    display: flex;
-    justify-content: space-between;
-    font-size: 10px;
-    margin-top: 10px;
-}
-
-#playBtn {
-    width: 100%;
-    margin-top: 8px;
-    padding: 6px;
-    background: #39ff14;
-    color: #000;
-    border: none;
-    font-family: inherit;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-#playBtn:hover {
-    background: #fff;
-}
-
-/* ================================
-   HUD & PROGRESS
-================================ */
-
-#hud {
+#anonymous {
     position: fixed;
-    bottom: 40px;
+
     left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
-    width: 450px;
-    max-width: 90vw;
-    text-shadow: 0 0 8px #39ff14;
-}
+    top: 50%;
 
-#hud h2 {
-    margin: 0 0 10px;
-    font-size: 18px;
-    letter-spacing: 1px;
-}
+    transform:
+        translate(-50%, -50%);
 
-.console-line {
-    font-size: 12px;
-    margin: 4px 0;
-    opacity: 0.9;
-}
+    z-index: 3;
 
-.progress-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 15px;
-    font-size: 12px;
-}
-
-.progress-bar-border {
-    flex-grow: 1;
-    height: 16px;
-    border: 1px solid #39ff14;
-    padding: 1px;
-}
-
-.progress-bar-fill {
-    height: 100%;
-    width: 100%;
-    background: #39ff14;
-    box-shadow: 0 0 8px #39ff14;
-}
-
-.tag-left {
-    position: fixed;
-    bottom: 15px;
-    left: 20px;
-    border: 1px solid #39ff14;
-    padding: 4px 8px;
-    font-size: 11px;
-}
-
-.tag-right {
-    position: fixed;
-    bottom: 15px;
-    right: 20px;
-    display: flex;
-    gap: 15px;
-    font-size: 14px;
-}
-</style>
-</head>
-
-<body>
-
-<div id="matrix"></div>
-<div class="mask-overlay"></div>
-
-<audio id="chaosAudio" src="Pro_3941 Chaos Mode (2).mp3" preload="auto" loop></audio>
-
-<div id="audioHud">
-    <div class="audio-header">
-        <span>AUDIO</span>
-        <span>— ▢ ✕</span>
-    </div>
-    <div class="audio-body">
-        <div class="mask-icon">🎭</div>
-        <div class="waveform" id="waveform">
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
-        </div>
-    </div>
-    <button id="playBtn">▶ PLAY CHAOS AUDIO</button>
-    <div class="audio-footer">
-        <span id="audioStatus">SYSTEM READY</span>
-        <span id="timer">00:00</span>
-    </div>
-</div>
-
-<div class="troll-container">
-    <div class="arrow arrow-n">↑</div>
-    <div class="arrow arrow-ne">↗</div>
-    <div class="arrow arrow-e">→</div>
-    <div class="arrow arrow-se">↘</div>
-    <div class="arrow arrow-s">↓</div>
-    <div class="arrow arrow-sw">↙</div>
-    <div class="arrow arrow-w">←</div>
-    <div class="arrow arrow-nw">↖</div>
-
-    <div class="troll-card">
-        <button class="close-btn">✕</button>
-        <h2>YOU ARE AN IDIOT</h2>
-        <img src="https://upload.wikimedia.org/wikipedia/en/9/9a/Trollface_non-free.png" alt="Trollface">
-        <button class="btn-loser">HAHA LOSER 😂</button>
-    </div>
-</div>
-
-<div id="hud">
-    <h2>&gt; SYSTEM HACKED BY PRO_3941</h2>
-    <div class="console-line">&gt; YOUR BRAIN = 0</div>
-    <div class="console-line">&gt; SKILL = -100</div>
-    <div class="console-line">&gt; YOU JUST GOT TROLLED 😂</div>
-
-    <div class="progress-container">
-        <span>TROLLING...</span>
-        <div class="progress-bar-border">
-            <div class="progress-bar-fill"></div>
-        </div>
-        <span>100%</span>
-    </div>
-</div>
-
-<div class="tag-left">PRO_3941 LABS</div>
-<div class="tag-right">
-    <span>🔊</span>
-    <span>&gt;--</span>
-</div>
-
-<script>
-/* Matrix Background */
-const matrixContainer = document.getElementById("matrix");
-const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%@";
-let matrixText = "";
-for (let i = 0; i < 4000; i++) {
-    matrixText += chars[Math.floor(Math.random() * chars.length)];
-    if (i % 80 === 0) matrixText += "\n";
-}
-matrixContainer.textContent = matrixText;
-
-/* Audio Player Logic */
-const audio = document.getElementById("chaosAudio");
-const playBtn = document.getElementById("playBtn");
-const audioStatus = document.getElementById("audioStatus");
-const timerEl = document.getElementById("timer");
-const waveform = document.getElementById("waveform");
-
-playBtn.addEventListener("click", () => {
-    if (audio.paused) {
-        audio.play().then(() => {
-            playBtn.textContent = "⏸ PAUSE CHAOS AUDIO";
-            audioStatus.textContent = "HACKER SOUND ACTIVE";
-            waveform.classList.add("playing");
-        }).catch(err => {
-            console.error("Audio playback error:", err);
-            audioStatus.textContent = "FILE NOT FOUND";
-        });
-    } else {
-        audio.pause();
-        playBtn.textContent = "▶ PLAY CHAOS AUDIO";
-        audioStatus.textContent = "PAUSED";
-        waveform.classList.remove("playing");
-    }
-});
-
-/* Timer sync with audio */
-audio.addEventListener("timeupdate", () => {
-    const totalSecs = Math.floor(audio.currentTime);
-    const mins = String(Math.floor(totalSecs / 60)).padStart(2, '0');
-    const secs = String(totalSecs % 60).padStart(2, '0');
-    timerEl.textContent = `${mins}:${secs}`;
-});
-</script>
-
-</body>
-</html>
-        2px solid #39ff14;
-
-    box-shadow:
-        0 0 15px rgba(57,255,20,.4);
-}
-
-#soundBtn {
-    width: 100%;
-
-    margin-top: 10px;
-    padding: 10px;
-
-    background: #39ff14;
-    color: #000;
-
-    border:
-        2px solid #39ff14;
-
-    border-radius: 4px;
-
-    font-family: monospace;
-    font-weight: bold;
-
-    cursor: pointer;
-}
-
-#soundBtn:hover {
-    background: #000;
-    color: #39ff14;
-}
-
-/* ================================
-   POPUPS
-================================ */
-
-.troll {
-    position: fixed;
-
-    width: 280px;
-    min-height: 310px;
-
-    padding: 20px;
-
-    background: #f5f5f5;
-    color: #111;
-
-    border:
-        3px solid #39ff14;
-
-    border-radius: 10px;
-
-    box-shadow:
-        0 0 10px #39ff14,
-        0 0 30px rgba(57,255,20,.5);
-
-    z-index: 100;
+    width: min(500px, 90vw);
 
     text-align: center;
 
-    user-select: none;
+    pointer-events: none;
+
+    opacity: .35;
+
+    filter:
+        drop-shadow(0 0 10px #39ff14);
 }
 
-.troll h2 {
-    margin: 0 0 10px;
-    font-size: 23px;
+.ascii-mask {
+    white-space: pre;
+
+    font-size:
+        clamp(7px, 1.7vw, 15px);
+
+    line-height: 1;
+
+    color: #39ff14;
+
+    text-shadow:
+        0 0 5px #39ff14,
+        0 0 15px #39ff14;
 }
 
-.troll .face {
-    display: block;
+.anonymous-title {
+    margin-top: 18px;
 
-    width: 120px;
-    height: 120px;
+    font-size:
+        clamp(20px, 5vw, 42px);
 
-    margin: 10px auto;
+    font-weight: bold;
 
-    object-fit: cover;
+    letter-spacing:
+        clamp(3px, 1vw, 9px);
 
-    border-radius: 8px;
+    text-shadow:
+        0 0 8px #39ff14,
+        0 0 25px #39ff14;
+}
+
+.anonymous-sub {
+    margin-top: 8px;
+
+    font-size: 11px;
+
+    letter-spacing: 4px;
+
+    opacity: .8;
+}
+
+/* =====================================================
+   AUDIO HUD
+===================================================== */
+
+#audioHud {
+    position: fixed;
+
+    top: 20px;
+    right: 20px;
+
+    width: 285px;
+
+    padding: 14px;
+
+    z-index: 1000;
+
+    background:
+        rgba(0,0,0,.94);
 
     border:
-        2px solid #111;
+        2px solid #39ff14;
+
+    box-shadow:
+        0 0 10px #39ff14,
+        0 0 30px rgba(57,255,20,.3);
+}
+
+.audio-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    padding-bottom: 6px;
+    margin-bottom: 10px;
+
+    border-bottom:
+        1px solid #39ff14;
+
+    font-size: 11px;
+}
+
+.audio-body {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+.mask-icon {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border:
+        1px solid #39ff14;
+
+    border-radius: 50%;
+
+    font-size: 19px;
+
+    box-shadow:
+        0 0 8px rgba(57,255,20,.5);
+}
+
+.waveform {
+    flex: 1;
+
+    height: 25px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 4px;
+}
+
+.wave-bar {
+    width: 4px;
+    height: 25%;
+
+    background: #39ff14;
+
+    box-shadow:
+        0 0 5px #39ff14;
+}
+
+.playing .wave-bar {
+    animation:
+        wave .45s infinite alternate ease-in-out;
+}
+
+.playing .wave-bar:nth-child(1) {
+    animation-delay: .05s;
+}
+
+.playing .wave-bar:nth-child(2) {
+    animation-delay: .15s;
+}
+
+.playing .wave-bar:nth-child(3) {
+    animation-delay: .25s;
+}
+
+.playing .wave-bar:nth-child(4) {
+    animation-delay: .10s;
+}
+
+.playing .wave-bar:nth-child(5) {
+    animation-delay: .30s;
+}
+
+.playing .wave-bar:nth-child(6) {
+    animation-delay: .20s;
+}
+
+@keyframes wave {
+    from {
+        height: 20%;
+    }
+
+    to {
+        height: 100%;
+    }
+}
+
+#playBtn {
+    width: 100%;
+
+    margin-top: 12px;
+
+    padding: 9px;
+
+    background: #39ff14;
+    color: #000;
+
+    border:
+        2px solid #39ff14;
+
+    font-family: inherit;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+#playBtn:hover {
+    background: #000;
+    color: #39ff14;
 
     box-shadow:
         0 0 12px #39ff14;
 }
 
-.troll p {
-    margin: 8px;
-    font-weight: bold;
+.audio-footer {
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-top: 9px;
+
+    font-size: 10px;
 }
 
-/* ================================
-   CLOSE
-================================ */
+/* =====================================================
+   TROLL CARD
+===================================================== */
 
-.close {
+.troll-container {
+    position: fixed;
+
+    top: 39%;
+    left: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    z-index: 100;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.troll-card {
+    position: relative;
+
+    width: 300px;
+
+    padding: 15px;
+
+    background: #fff;
+    color: #000;
+
+    border:
+        3px solid #39ff14;
+
+    border-radius: 5px;
+
+    text-align: center;
+
+    box-shadow:
+        0 0 20px #39ff14,
+        0 0 45px rgba(57,255,20,.6);
+}
+
+.troll-card h2 {
+    margin: 15px 0 10px;
+
+    font-size: 22px;
+}
+
+.troll-card img {
+    width: 100px;
+    height: 100px;
+
+    object-fit: contain;
+
+    margin: 10px;
+}
+
+.close-btn {
     position: absolute;
 
-    top: 6px;
-    right: 7px;
+    top: 4px;
+    right: 4px;
 
-    padding: 3px 7px;
+    width: 24px;
+    height: 24px;
 
-    background: #111;
-    color: white;
+    background: #000;
+    color: #fff;
 
-    border: 0;
+    border:
+        1px solid #39ff14;
 
-    font-family: monospace;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    background: #39ff14;
+    color: #000;
+}
+
+.btn-loser {
+    width: 80%;
+
+    padding: 9px;
+
+    margin: 10px auto 5px;
+
+    display: block;
+
+    background: #39ff14;
+    color: #000;
+
+    border:
+        2px solid #000;
+
+    font-family: inherit;
     font-weight: bold;
 
     cursor: pointer;
 }
 
-.close:hover {
-    background: #39ff14;
-    color: #000;
+/* =====================================================
+   ARROWS
+===================================================== */
+
+.arrow {
+    position: absolute;
+
+    color: #39ff14;
+
+    font-size: 42px;
+    font-weight: bold;
+
+    text-shadow:
+        0 0 10px #39ff14;
+
+    pointer-events: none;
 }
 
-/* ================================
+.arrow-n {
+    top: -60px;
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+}
+
+.arrow-ne {
+    top: -45px;
+    right: -45px;
+}
+
+.arrow-e {
+    right: -60px;
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+}
+
+.arrow-se {
+    bottom: -45px;
+    right: -45px;
+}
+
+.arrow-s {
+    bottom: -60px;
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+}
+
+.arrow-sw {
+    bottom: -45px;
+    left: -45px;
+}
+
+.arrow-w {
+    left: -60px;
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+}
+
+.arrow-nw {
+    top: -45px;
+    left: -45px;
+}
+
+/* =====================================================
+   HUD
+===================================================== */
+
+#hud {
+    position: fixed;
+
+    left: 50%;
+    bottom: 70px;
+
+    transform:
+        translateX(-50%);
+
+    z-index: 20;
+
+    width: 480px;
+    max-width: 90vw;
+
+    text-shadow:
+        0 0 8px #39ff14;
+}
+
+#hud h2 {
+    margin: 0 0 12px;
+
+    font-size: 20px;
+}
+
+.console-line {
+    margin: 6px 0;
+
+    font-size: 14px;
+}
+
+.progress-container {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-top: 20px;
+
+    font-size: 12px;
+}
+
+.progress-bar-border {
+    flex: 1;
+
+    height: 17px;
+
+    padding: 1px;
+
+    border:
+        1px solid #39ff14;
+}
+
+.progress-bar-fill {
+    width: 100%;
+    height: 100%;
+
+    background: #39ff14;
+
+    box-shadow:
+        0 0 8px #39ff14;
+}
+
+/* =====================================================
+   TAGS
+===================================================== */
+
+.tag-left {
+    position: fixed;
+
+    bottom: 20px;
+    left: 20px;
+
+    z-index: 20;
+
+    padding: 6px 12px;
+
+    border:
+        1px solid #39ff14;
+
+    font-size: 12px;
+
+    text-shadow:
+        0 0 5px #39ff14;
+}
+
+.tag-right {
+    position: fixed;
+
+    bottom: 20px;
+    right: 20px;
+
+    z-index: 20;
+
+    font-size: 16px;
+
+    text-shadow:
+        0 0 5px #39ff14;
+}
+
+/* =====================================================
    MOBILE
-================================ */
+===================================================== */
 
 @media (max-width: 600px) {
 
@@ -930,24 +625,37 @@ audio.addEventListener("timeupdate", () => {
         top: 10px;
         right: 10px;
 
-        width: 205px;
+        width: 215px;
 
-        font-size: 11px;
+        font-size: 10px;
     }
 
-    .troll {
-        width: 240px;
-        min-height: 285px;
+    .troll-card {
+        width: 245px;
     }
 
-    .troll .face {
-        width: 100px;
-        height: 100px;
+    .arrow {
+        font-size: 30px;
+    }
+
+    .arrow-e {
+        right: -40px;
+    }
+
+    .arrow-w {
+        left: -40px;
     }
 
     #hud {
-        left: 10px;
-        bottom: 10px;
+        bottom: 65px;
+    }
+
+    #hud h2 {
+        font-size: 15px;
+    }
+
+    .console-line {
+        font-size: 11px;
     }
 }
 </style>
@@ -955,138 +663,137 @@ audio.addEventListener("timeupdate", () => {
 
 <body>
 
-<!-- ================================
-     MATRIX BACKGROUND
-================================ -->
+<!-- =====================================================
+     BACKGROUND
+===================================================== -->
 
 <div id="matrix"></div>
+<div id="scanlines"></div>
+<div id="vignette"></div>
+
+<div id="anonymous">
+
+<pre class="ascii-mask">
+             █████████████████
+          ███████████████████████
+        ███████████████████████████
+       ████████             ████████
+      ██████    ███████████    ██████
+     █████    ████       ████    █████
+     ████   ███             ███   ████
+     ███   ███    ███████    ███   ███
+     ███   ██    █████████    ██   ███
+     ███   ██    ███   ███    ██   ███
+     ███   ███    █████████    ███   ███
+     ████   ███             ███   ████
+      █████    ████       ████    █████
+       ██████    ███████████    ██████
+        ███████████████████████████
+          ███████████████████████
+             █████████████████
+</pre>
+
+<div class="anonymous-title">
+ANONYMOUS
+</div>
+
+<div class="anonymous-sub">
+WE ARE LEGION • PRO_3941 CHAOS NETWORK
+</div>
+
+</div>
 
 
-<!-- ================================
+<!-- =====================================================
      AUDIO
-================================ -->
+===================================================== -->
 
 <audio
     id="chaosAudio"
-    preload="auto"
+    preload="metadata"
     loop>
+
+    <source
+        src="./Pro_3941%20Chaos%20Mode%20%282%29.mp3"
+        type="audio/mpeg">
+
 </audio>
 
 
-<!-- ================================
-     AUDIO CONTROL
-================================ -->
-
 <div id="audioHud">
 
-    <b>◉ PRO_3941 AUDIO SYSTEM</b>
+    <div class="audio-header">
+        <span>AUDIO</span>
+        <span>PRO_3941</span>
+    </div>
+
+    <div class="audio-body">
+
+        <div class="mask-icon">
+            🎭
+        </div>
+
+        <div
+            class="waveform"
+            id="waveform">
+
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+
+        </div>
+
+    </div>
 
     <button
-        id="soundBtn"
+        id="playBtn"
         type="button">
-        🔊 ENABLE CHAOS AUDIO
+
+        ▶ PLAY CHAOS AUDIO
+
     </button>
 
-    <div id="audioStatus">
-        STATUS: LOADING... 🔄
+    <div class="audio-footer">
+
+        <span id="audioStatus">
+            LOADING AUDIO...
+        </span>
+
+        <span id="timer">
+            00:00
+        </span>
+
     </div>
 
 </div>
 
 
-<!-- ================================
-     HUD
-================================ -->
+<!-- =====================================================
+     TROLL CARD
+===================================================== -->
 
-<div id="hud">
+<div class="troll-container">
 
-    <h1>
-        &gt; PRO_3941 CHAOS ENGINE 😂
-    </h1>
+    <div class="arrow arrow-n">↑</div>
+    <div class="arrow arrow-ne">↗</div>
+    <div class="arrow arrow-e">→</div>
+    <div class="arrow arrow-se">↘</div>
+    <div class="arrow arrow-s">↓</div>
+    <div class="arrow arrow-sw">↙</div>
+    <div class="arrow arrow-w">←</div>
+    <div class="arrow arrow-nw">↖</div>
 
-    <div id="status">
-        &gt; SYSTEM STATUS: READY
-    </div>
+    <div class="troll-card">
 
-    <div id="counter">
-        &gt; POPUPS: 0
-    </div>
+        <button
+            class="close-btn"
+            id="closeBtn">
 
-</div>
+            ✕
 
-
-<script>
-
-/* ==================================================
-   CONFIG
-================================================== */
-
-const IMAGE_FILE = "./face.png";
-
-const AUDIO_FILE = "./chaos.mp3";
-
-const POPUP_INTERVAL = 20000;
-
-const popups = [];
-
-
-/* ==================================================
-   MATRIX
-================================================== */
-
-const chars =
-    "01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%@";
-
-let matrixText = "";
-
-for (let i = 0; i < 6000; i++) {
-
-    matrixText +=
-        chars[
-            Math.floor(
-                Math.random() *
-                chars.length
-            )
-        ];
-
-    if (i % 80 === 0) {
-        matrixText += "\n";
-    }
-}
-
-document.getElementById("matrix")
-    .textContent = matrixText;
-
-
-/* ==================================================
-   COUNTER
-================================================== */
-
-function updateCounter() {
-
-    document.getElementById("counter")
-        .textContent =
-        "> POPUPS: " +
-        popups.length;
-
-}
-
-
-/* ==================================================
-   CREATE POPUP
-================================================== */
-
-function createPopup() {
-
-    const popup =
-        document.createElement("div");
-
-    popup.className = "troll";
-
-    popup.innerHTML = `
-
-        <button class="close">
-            X
         </button>
 
         <h2>
@@ -1094,186 +801,154 @@ function createPopup() {
         </h2>
 
         <img
-            class="face"
-            src="${IMAGE_FILE}"
-            alt="Chaos Face"
-        >
+            src="face.png"
+            alt="Chaos Face">
 
-        <p>
+        <button
+            class="btn-loser"
+            id="loserBtn">
+
             HAHA LOSER 💀
-        </p>
 
-        <small>
-            READ THE TXT LULZ 😂
-        </small>
+        </button>
 
-    `;
+    </div>
 
-    document.body.appendChild(popup);
+</div>
 
 
-    const obj = {
+<!-- =====================================================
+     HUD
+===================================================== -->
 
-        el: popup,
+<div id="hud">
 
-        x:
-            Math.random() *
-            Math.max(
-                1,
-                window.innerWidth -
-                300
-            ),
+    <h2>
+        &gt; PRO_3941 CHAOS NETWORK
+    </h2>
 
-        y:
-            Math.random() *
-            Math.max(
-                1,
-                window.innerHeight -
-                350
-            ),
+    <div class="console-line">
+        &gt; SYSTEM: ONLINE
+    </div>
 
-        dx:
-            (Math.random() > .5 ? 1 : -1) *
-            (1.5 + Math.random() * 2.5),
+    <div class="console-line">
+        &gt; ANONYMOUS PROTOCOL: ACTIVE
+    </div>
 
-        dy:
-            (Math.random() > .5 ? 1 : -1) *
-            (1.5 + Math.random() * 2.5)
+    <div class="console-line">
+        &gt; YOU JUST GOT TROLLED 😂
+    </div>
 
-    };
+    <div class="progress-container">
 
+        <span>
+            TROLLING...
+        </span>
 
-    popups.push(obj);
+        <div class="progress-bar-border">
 
-    updateCounter();
+            <div
+                class="progress-bar-fill">
+            </div>
 
+        </div>
 
-    /* ================================
-       CLOSE BUTTON
-    ================================= */
+        <span>
+            100%
+        </span>
 
-    popup
-        .querySelector(".close")
-        .addEventListener(
-            "click",
-            () => {
+    </div>
 
-                popup.remove();
-
-                const index =
-                    popups.indexOf(obj);
-
-                if (index !== -1) {
-
-                    popups.splice(
-                        index,
-                        1
-                    );
-
-                }
-
-                createPopup();
-                createPopup();
-
-                updateCounter();
-
-            }
-        );
-
-}
+</div>
 
 
-/* ==================================================
-   BOUNCING ENGINE
-================================================== */
+<div class="tag-left">
+    PRO_3941 LABS
+</div>
 
-function animate() {
-
-    for (const popup of popups) {
-
-        if (!popup.el.isConnected) {
-            continue;
-        }
+<div class="tag-right">
+    🔊 &gt;_ SYSTEM
+</div>
 
 
-        const maxX =
-            Math.max(
-                0,
-                window.innerWidth -
-                popup.el.offsetWidth
-            );
+<script>
 
+/* =====================================================
+   MATRIX / TERMINAL TEXT
+===================================================== */
 
-        const maxY =
-            Math.max(
-                0,
-                window.innerHeight -
-                popup.el.offsetHeight
-            );
+const matrix =
+    document.getElementById("matrix");
 
+const matrixChars =
+    "01ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+    "abcdefghijklmnopqrstuvwxyz" +
+    "0123456789#$%@<>[]{}";
 
-        popup.x += popup.dx;
-        popup.y += popup.dy;
+const terminalWords = [
+    "PRO_3941",
+    "ANONYMOUS",
+    "SYSTEM ONLINE",
+    "ACCESS GRANTED",
+    "CHAOS ENGINE",
+    "MASK PROTOCOL",
+    "WE ARE LEGION",
+    "TRACE: DISABLED",
+    "ENCRYPTED",
+    "NETWORK ACTIVE",
+    "TROLL MODE",
+    "CONNECTION SECURE",
+    ">>>",
+    "01010101",
+    "SYSTEM_READY"
+];
 
+let matrixText = "";
 
-        if (popup.x <= 0) {
+for (let i = 0; i < 7000; i++) {
 
-            popup.x = 0;
-            popup.dx *= -1;
+    if (Math.random() < 0.025) {
 
-        }
+        matrixText +=
+            terminalWords[
+                Math.floor(
+                    Math.random() *
+                    terminalWords.length
+                )
+            ];
 
+    } else {
 
-        if (popup.x >= maxX) {
-
-            popup.x = maxX;
-            popup.dx *= -1;
-
-        }
-
-
-        if (popup.y <= 0) {
-
-            popup.y = 0;
-            popup.dy *= -1;
-
-        }
-
-
-        if (popup.y >= maxY) {
-
-            popup.y = maxY;
-            popup.dy *= -1;
-
-        }
-
-
-        popup.el.style.left =
-            popup.x + "px";
-
-        popup.el.style.top =
-            popup.y + "px";
+        matrixText +=
+            matrixChars[
+                Math.floor(
+                    Math.random() *
+                    matrixChars.length
+                )
+            ];
 
     }
 
-
-    requestAnimationFrame(animate);
-
+    if (i % 75 === 0) {
+        matrixText += "\n";
+    }
 }
 
+matrix.textContent = matrixText;
 
-/* ==================================================
-   AUDIO ENGINE
-================================================== */
+
+/* =====================================================
+   AUDIO SYSTEM
+===================================================== */
 
 const audio =
     document.getElementById(
         "chaosAudio"
     );
 
-const soundBtn =
+const playBtn =
     document.getElementById(
-        "soundBtn"
+        "playBtn"
     );
 
 const audioStatus =
@@ -1281,224 +956,260 @@ const audioStatus =
         "audioStatus"
     );
 
+const timer =
+    document.getElementById(
+        "timer"
+    );
 
-/*
-    IMPORTANT:
-    Set the source ONCE.
-*/
-
-audio.src = AUDIO_FILE;
-
-
-/*
-    Ask the browser to load chaos.mp3.
-*/
-
-audio.load();
+const waveform =
+    document.getElementById(
+        "waveform"
+    );
 
 
 /*
-    MP3 is ready to play.
+    MP3 filename:
+
+    Pro_3941 Chaos Mode (2).mp3
+
+    The HTML source above encodes:
+    spaces      -> %20
+    (           -> %28
+    )           -> %29
 */
+
+audio.volume = 1;
+audio.loop = true;
+
+
+/* =====================================================
+   AUDIO EVENTS
+===================================================== */
+
+audio.addEventListener(
+    "loadedmetadata",
+    () => {
+
+        audioStatus.textContent =
+            "MP3 READY 🔊";
+
+    }
+);
+
 
 audio.addEventListener(
     "canplay",
     () => {
 
         audioStatus.textContent =
-            "STATUS: AUDIO READY 🔊";
+            "AUDIO READY 🔊";
 
     }
 );
 
-
-/*
-    MP3 metadata loaded.
-*/
-
-audio.addEventListener(
-    "loadeddata",
-    () => {
-
-        audioStatus.textContent =
-            "STATUS: MP3 LOADED 🔊";
-
-    }
-);
-
-
-/*
-    MP3 cannot be loaded.
-*/
-
-audio.addEventListener(
-    "error",
-    () => {
-
-        console.error(
-            "CHAOS AUDIO ERROR",
-            audio.error
-        );
-
-        audioStatus.textContent =
-            "STATUS: chaos.mp3 FAILED ❌";
-
-    }
-);
-
-
-/*
-    Actual playback.
-
-    This happens from a real button click,
-    which satisfies browser autoplay policy.
-*/
-
-soundBtn.addEventListener(
-    "click",
-    async () => {
-
-        try {
-
-            audio.pause();
-
-            audio.currentTime = 0;
-
-            audio.volume = 1;
-
-            audio.muted = false;
-
-            await audio.play();
-
-
-            audioStatus.textContent =
-                "STATUS: LOOPING 🔊";
-
-            soundBtn.textContent =
-                "🔊 CHAOS AUDIO ON";
-
-
-            document.getElementById(
-                "status"
-            ).textContent =
-                "> AUDIO ONLINE — CHAOS ACTIVE 😂";
-
-        }
-
-        catch (error) {
-
-            console.error(
-                "PLAYBACK ERROR:",
-                error
-            );
-
-            audioStatus.textContent =
-                "STATUS: PLAYBACK BLOCKED ❌";
-
-        }
-
-    }
-);
-
-
-/*
-    If the browser pauses it unexpectedly,
-    update the status.
-*/
-
-audio.addEventListener(
-    "pause",
-    () => {
-
-        if (
-            audio.currentTime > 0 &&
-            !audio.ended
-        ) {
-
-            audioStatus.textContent =
-                "STATUS: PAUSED ⏸️";
-
-        }
-
-    }
-);
-
-
-/*
-    Confirm that playback actually started.
-*/
 
 audio.addEventListener(
     "playing",
     () => {
 
         audioStatus.textContent =
-            "STATUS: LOOPING 🔊";
+            "CHAOS AUDIO ACTIVE 🔊";
+
+        waveform.classList.add(
+            "playing"
+        );
+
+        playBtn.textContent =
+            "⏸ PAUSE CHAOS AUDIO";
 
     }
 );
 
 
-/* ==================================================
-   START
-================================================== */
-
-createPopup();
-
-animate();
-
-
-/* ==================================================
-   NEW POPUP EVERY 20 SECONDS
-================================================== */
-
-setInterval(
+audio.addEventListener(
+    "pause",
     () => {
 
-        createPopup();
+        waveform.classList.remove(
+            "playing"
+        );
 
-    },
-    POPUP_INTERVAL
+        playBtn.textContent =
+            "▶ PLAY CHAOS AUDIO";
+
+        if (!audio.ended) {
+
+            audioStatus.textContent =
+                "PAUSED ⏸️";
+
+        }
+
+    }
 );
 
 
-/* ==================================================
-   RESIZE
-================================================== */
-
-window.addEventListener(
-    "resize",
+audio.addEventListener(
+    "ended",
     () => {
 
-        for (const popup of popups) {
+        waveform.classList.remove(
+            "playing"
+        );
 
-            const maxX =
-                Math.max(
-                    0,
-                    window.innerWidth -
-                    popup.el.offsetWidth
+        playBtn.textContent =
+            "▶ PLAY CHAOS AUDIO";
+
+    }
+);
+
+
+audio.addEventListener(
+    "error",
+    () => {
+
+        waveform.classList.remove(
+            "playing"
+        );
+
+        audioStatus.textContent =
+            "MP3 LOAD ERROR ❌";
+
+        console.error(
+            "Could not load:",
+            "Pro_3941 Chaos Mode (2).mp3",
+            audio.error
+        );
+
+    }
+);
+
+
+/* =====================================================
+   PLAY / PAUSE
+===================================================== */
+
+playBtn.addEventListener(
+    "click",
+    async () => {
+
+        if (audio.paused) {
+
+            try {
+
+                await audio.play();
+
+            } catch (error) {
+
+                console.error(
+                    "Playback failed:",
+                    error
                 );
 
-            const maxY =
-                Math.max(
-                    0,
-                    window.innerHeight -
-                    popup.el.offsetHeight
-                );
+                audioStatus.textContent =
+                    "PLAYBACK ERROR ❌";
 
-            popup.x =
-                Math.min(
-                    popup.x,
-                    maxX
-                );
+            }
 
-            popup.y =
-                Math.min(
-                    popup.y,
-                    maxY
-                );
+        } else {
+
+            audio.pause();
 
         }
+
+    }
+);
+
+
+/* =====================================================
+   AUDIO TIMER
+===================================================== */
+
+audio.addEventListener(
+    "timeupdate",
+    () => {
+
+        const seconds =
+            Math.floor(
+                audio.currentTime
+            );
+
+        const mins =
+            String(
+                Math.floor(
+                    seconds / 60
+                )
+            ).padStart(
+                2,
+                "0"
+            );
+
+        const secs =
+            String(
+                seconds % 60
+            ).padStart(
+                2,
+                "0"
+            );
+
+        timer.textContent =
+            mins + ":" + secs;
+
+    }
+);
+
+
+/* =====================================================
+   TROLL CARD
+===================================================== */
+
+const closeBtn =
+    document.getElementById(
+        "closeBtn"
+    );
+
+const loserBtn =
+    document.getElementById(
+        "loserBtn"
+    );
+
+
+closeBtn.addEventListener(
+    "click",
+    () => {
+
+        const card =
+            document.querySelector(
+                ".troll-card"
+            );
+
+        card.style.display =
+            "none";
+
+    }
+);
+
+
+loserBtn.addEventListener(
+    "click",
+    () => {
+
+        const card =
+            document.querySelector(
+                ".troll-card"
+            );
+
+        card.style.transform =
+            "scale(.9)";
+
+        setTimeout(
+            () => {
+
+                card.style.transform =
+                    "scale(1)";
+
+            },
+            150
+        );
 
     }
 );
@@ -1507,3 +1218,4 @@ window.addEventListener(
 
 </body>
 </html>
+:::
