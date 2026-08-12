@@ -1,103 +1,113 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Totally Normal Website 😂</title>
+<script>
 
-<style>
-* {
-    box-sizing: border-box;
-}
+/* =====================================================
+   CHAOS AUDIO
+===================================================== */
 
-html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #000;
-    color: #39ff14;
-    font-family: 'Courier New', Courier, monospace;
-}
+const audio = document.getElementById("chaosAudio");
+const playBtn = document.getElementById("playBtn");
+const audioStatus = document.getElementById("audioStatus");
+const timer = document.getElementById("timer");
+const waveform = document.getElementById("waveform");
 
-body {
-    background: radial-gradient(circle at center, #071407 0%, #000 80%);
-}
+/* Volume */
+audio.volume = 1;
 
-/* ================================
-   MATRIX BACKGROUND & GRAPHICS
-================================ */
+/* Audio loaded */
+audio.addEventListener("loadedmetadata", () => {
+    audioStatus.textContent = "MP3 READY 🔊";
+});
 
-#matrix {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    opacity: 0.2;
-    pointer-events: none;
-    overflow: hidden;
-    word-break: break-all;
-    font-size: 13px;
-    line-height: 14px;
-    text-shadow: 0 0 5px #39ff14;
-}
+/* Playing */
+audio.addEventListener("playing", () => {
 
-/* Anonymous Mask Background Graphic */
-.mask-overlay {
-    position: fixed;
-    top: 50%;
-    left: 20%;
-    transform: translate(-50%, -50%);
-    width: 320px;
-    height: 420px;
-    opacity: 0.15;
-    pointer-events: none;
-    background: url('https://upload.wikimedia.org/wikipedia/commons/a/a6/Anonymous_emblem.svg') no-repeat center/contain;
-    filter: drop-shadow(0 0 10px #39ff14);
-}
+    audioStatus.textContent =
+        "CHAOS AUDIO ACTIVE 🔊";
 
-/* Skull Background Graphic (Bottom Right) */
-.skull-overlay {
-    position: fixed;
-    bottom: 8%;
-    right: 8%;
-    width: 180px;
-    height: 180px;
-    opacity: 0.12;
-    pointer-events: none;
-    background: radial-gradient(circle, #39ff14 20%, transparent 70%);
-    border-radius: 50%;
-    box-shadow: 0 0 30px #39ff14;
-}
+    waveform.classList.add("playing");
 
-/* ================================
-   CENTER TROLL POPUP & ARROWS
-================================ */
+    playBtn.textContent =
+        "⏸ PAUSE CHAOS AUDIO";
+});
 
-.troll-container {
-    position: fixed;
-    top: 38%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+/* Paused */
+audio.addEventListener("pause", () => {
 
-.troll-card {
-    position: relative;
-    width: 300px;
-    background: #ffffff;
-    color: #000;
-    border: 3px solid #39ff14;
-    box-shadow: 0 0 20px #39ff14, 0 0 40px rgba(57,255,20,0.6);
-    border-radius: 4px;
-    text-align: center;
-    padding: 15px;
-    z-index: 2;
-}
+    waveform.classList.remove("playing");
 
+    playBtn.textContent =
+        "▶ PLAY CHAOS AUDIO";
+
+    if (!audio.ended) {
+        audioStatus.textContent =
+            "PAUSED ⏸️";
+    }
+});
+
+/* Error */
+audio.addEventListener("error", () => {
+
+    waveform.classList.remove("playing");
+
+    audioStatus.textContent =
+        "MP3 LOAD ERROR ❌";
+
+    console.error(
+        "Audio error:",
+        audio.error
+    );
+});
+
+/* Play / pause */
+playBtn.addEventListener("click", async () => {
+
+    if (audio.paused) {
+
+        try {
+
+            await audio.play();
+
+        } catch (error) {
+
+            console.error(
+                "Playback failed:",
+                error
+            );
+
+            audioStatus.textContent =
+                "PLAYBACK ERROR ❌";
+        }
+
+    } else {
+
+        audio.pause();
+
+    }
+
+});
+
+/* Timer */
+audio.addEventListener("timeupdate", () => {
+
+    const seconds =
+        Math.floor(audio.currentTime);
+
+    const mins =
+        String(
+            Math.floor(seconds / 60)
+        ).padStart(2, "0");
+
+    const secs =
+        String(
+            seconds % 60
+        ).padStart(2, "0");
+
+    timer.textContent =
+        mins + ":" + secs;
+
+});
+
+</script>
 .troll-card .close-btn {
     position: absolute;
     top: 4px;
