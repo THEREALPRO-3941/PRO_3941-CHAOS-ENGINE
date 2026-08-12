@@ -1,1 +1,6 @@
-
+<audio
+    id="chaosAudio"
+    preload="auto"
+    loop
+    src="Pro_3941 Chaos Mode (2).mp3">
+</audio>
