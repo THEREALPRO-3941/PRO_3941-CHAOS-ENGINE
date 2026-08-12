@@ -26,14 +26,14 @@ body {
 }
 
 /* ================================
-   BACKGROUND & OVERLAYS
+   MATRIX BACKGROUND & GRAPHICS
 ================================ */
 
 #matrix {
     position: fixed;
     inset: 0;
     z-index: 0;
-    opacity: 0.25;
+    opacity: 0.2;
     pointer-events: none;
     overflow: hidden;
     word-break: break-all;
@@ -42,16 +42,32 @@ body {
     text-shadow: 0 0 5px #39ff14;
 }
 
+/* Anonymous Mask Background Graphic */
 .mask-overlay {
     position: fixed;
     top: 50%;
-    left: 15%;
-    transform: translateY(-50%);
-    width: 300px;
-    height: 400px;
-    opacity: 0.08;
+    left: 20%;
+    transform: translate(-50%, -50%);
+    width: 320px;
+    height: 420px;
+    opacity: 0.15;
     pointer-events: none;
     background: url('https://upload.wikimedia.org/wikipedia/commons/a/a6/Anonymous_emblem.svg') no-repeat center/contain;
+    filter: drop-shadow(0 0 10px #39ff14);
+}
+
+/* Skull Background Graphic (Bottom Right) */
+.skull-overlay {
+    position: fixed;
+    bottom: 8%;
+    right: 8%;
+    width: 180px;
+    height: 180px;
+    opacity: 0.12;
+    pointer-events: none;
+    background: radial-gradient(circle, #39ff14 20%, transparent 70%);
+    border-radius: 50%;
+    box-shadow: 0 0 30px #39ff14;
 }
 
 /* ================================
@@ -60,7 +76,7 @@ body {
 
 .troll-container {
     position: fixed;
-    top: 45%;
+    top: 38%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 100;
@@ -97,6 +113,352 @@ body {
     align-items: center;
     justify-content: center;
 }
+
+.troll-card .close-btn:hover {
+    background: #39ff14;
+    color: #000;
+}
+
+.troll-card h2 {
+    margin: 15px 0 10px;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.troll-card img {
+    width: 100px;
+    height: auto;
+    margin: 10px 0;
+}
+
+.troll-card .btn-loser {
+    display: block;
+    width: 80%;
+    margin: 10px auto 5px;
+    padding: 8px;
+    background: #39ff14;
+    border: 2px solid #000;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.8);
+}
+
+/* ARROWS */
+.arrow {
+    position: absolute;
+    color: #39ff14;
+    font-size: 45px;
+    font-weight: bold;
+    text-shadow: 0 0 10px #39ff14;
+    pointer-events: none;
+}
+
+.arrow-n  { top: -60px; left: 50%; transform: translateX(-50%); }
+.arrow-ne { top: -45px; right: -45px; }
+.arrow-e  { right: -60px; top: 50%; transform: translateY(-50%); }
+.arrow-se { bottom: -45px; right: -45px; }
+.arrow-s  { bottom: -60px; left: 50%; transform: translateX(-50%); }
+.arrow-sw { bottom: -45px; left: -45px; }
+.arrow-w  { left: -60px; top: 50%; transform: translateY(-50%); }
+.arrow-nw { top: -45px; left: -45px; }
+
+/* ================================
+   AUDIO PANEL (TOP RIGHT)
+================================ */
+
+#audioHud {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 270px;
+    padding: 12px 15px;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid #39ff14;
+    box-shadow: 0 0 10px rgba(57,255,20,0.5);
+}
+
+.audio-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    border-bottom: 1px solid #39ff14;
+    padding-bottom: 4px;
+    margin-bottom: 10px;
+}
+
+.audio-body {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mask-icon {
+    width: 35px;
+    height: 35px;
+    border: 1px solid #39ff14;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.waveform {
+    flex-grow: 1;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.wave-bar {
+    width: 4px;
+    height: 30%;
+    background: #39ff14;
+    box-shadow: 0 0 4px #39ff14;
+    transition: height 0.1s ease;
+}
+
+.playing .wave-bar {
+    animation: wave 0.8s infinite ease-in-out alternate;
+}
+
+.playing .wave-bar:nth-child(1) { animation-delay: 0.1s; }
+.playing .wave-bar:nth-child(2) { animation-delay: 0.3s; }
+.playing .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+.playing .wave-bar:nth-child(4) { animation-delay: 0.5s; }
+.playing .wave-bar:nth-child(5) { animation-delay: 0.4s; }
+
+@keyframes wave {
+    0% { height: 20%; }
+    100% { height: 100%; }
+}
+
+.audio-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    margin-top: 10px;
+}
+
+#playBtn {
+    width: 100%;
+    margin-top: 8px;
+    padding: 6px;
+    background: #39ff14;
+    color: #000;
+    border: none;
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#playBtn:hover {
+    background: #fff;
+}
+
+/* ================================
+   HUD & PROGRESS (TEXT FROM IMAGE)
+================================ */
+
+#hud {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    width: 480px;
+    max-width: 90vw;
+    text-shadow: 0 0 8px #39ff14;
+}
+
+#hud h2 {
+    margin: 0 0 12px;
+    font-size: 20px;
+    letter-spacing: 1px;
+}
+
+.console-line {
+    font-size: 14px;
+    margin: 6px 0;
+    opacity: 0.95;
+}
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    font-size: 13px;
+}
+
+.progress-bar-border {
+    flex-grow: 1;
+    height: 18px;
+    border: 1px solid #39ff14;
+    padding: 1px;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    width: 100%;
+    background: #39ff14;
+    box-shadow: 0 0 8px #39ff14;
+}
+
+/* CORNER TAGS */
+.tag-left {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    border: 1px solid #39ff14;
+    padding: 6px 12px;
+    font-size: 12px;
+    text-shadow: 0 0 5px #39ff14;
+}
+
+.tag-right {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 15px;
+    font-size: 16px;
+    text-shadow: 0 0 5px #39ff14;
+}
+</style>
+</head>
+
+<body>
+
+<div id="matrix"></div>
+<div class="mask-overlay"></div>
+<div class="skull-overlay"></div>
+
+<audio id="chaosAudio" src="Pro_3941 Chaos Mode (2).mp3" preload="auto" loop></audio>
+
+<div id="audioHud">
+    <div class="audio-header">
+        <span>AUDIO</span>
+        <span>— ▢ ✕</span>
+    </div>
+    <div class="audio-body">
+        <div class="mask-icon">🎭</div>
+        <div class="waveform" id="waveform">
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+        </div>
+    </div>
+    <button id="playBtn">▶ PLAY CHAOS AUDIO</button>
+    <div class="audio-footer">
+        <span id="audioStatus">HACKER SOUND ACTIVE</span>
+        <span id="timer">00:07</span>
+    </div>
+</div>
+
+<div class="troll-container">
+    <div class="arrow arrow-n">↑</div>
+    <div class="arrow arrow-ne">↗</div>
+    <div class="arrow arrow-e">→</div>
+    <div class="arrow arrow-se">↘</div>
+    <div class="arrow arrow-s">↓</div>
+    <div class="arrow arrow-sw">↙</div>
+    <div class="arrow arrow-w">←</div>
+    <div class="arrow arrow-nw">↖</div>
+
+    <div class="troll-card">
+        <button class="close-btn">✕</button>
+        <h2>YOU ARE AN IDIOT</h2>
+        <img src="https://upload.wikimedia.org/wikipedia/en/9/9a/Trollface_non-free.png" alt="Trollface">
+        <button class="btn-loser">HAHA LOSER 😂</button>
+    </div>
+</div>
+
+<div id="hud">
+    <h2>&gt; SYSTEM HACKED BY PRO_3941</h2>
+    <div class="console-line">&gt; YOUR BRAIN = 0</div>
+    <div class="console-line">&gt; SKILL = -100</div>
+    <div class="console-line">&gt; YOU JUST GOT TROLLED 😂</div>
+
+    <div class="progress-container">
+        <span>TROLLING...</span>
+        <div class="progress-bar-border">
+            <div class="progress-bar-fill"></div>
+        </div>
+        <span>100%</span>
+    </div>
+</div>
+
+<div class="tag-left">PRO_3941 LABS</div>
+<div class="tag-right">
+    <span>🔊</span>
+    <span>&gt;--</span>
+</div>
+
+<script>
+/* Matrix Background */
+const matrixContainer = document.getElementById("matrix");
+const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%@";
+let matrixText = "";
+for (let i = 0; i < 4000; i++) {
+    matrixText += chars[Math.floor(Math.random() * chars.length)];
+    if (i % 80 === 0) matrixText += "\n";
+}
+matrixContainer.textContent = matrixText;
+
+/* Audio Controller */
+const audio = document.getElementById("chaosAudio");
+const playBtn = document.getElementById("playBtn");
+const audioStatus = document.getElementById("audioStatus");
+const timerEl = document.getElementById("timer");
+const waveform = document.getElementById("waveform");
+
+async function playAudio() {
+    try {
+        await audio.play();
+        playBtn.textContent = "⏸ PAUSE CHAOS AUDIO";
+        audioStatus.textContent = "HACKER SOUND ACTIVE";
+        waveform.classList.add("playing");
+    } catch (err) {
+        console.error("Playback error:", err);
+        audioStatus.textContent = "PLAYBACK BLOCKED ❌";
+    }
+}
+
+playBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (audio.paused) {
+        playAudio();
+    } else {
+        audio.pause();
+        playBtn.textContent = "▶ PLAY CHAOS AUDIO";
+        audioStatus.textContent = "PAUSED";
+        waveform.classList.remove("playing");
+    }
+});
+
+document.addEventListener("click", () => {
+    if (audio.paused && audioStatus.textContent !== "PAUSED") {
+        playAudio();
+    }
+}, { once: true });
+
+audio.addEventListener("timeupdate", () => {
+    const totalSecs = Math.floor(audio.currentTime);
+    const mins = String(Math.floor(totalSecs / 60)).padStart(2, '0');
+    const secs = String(totalSecs % 60).padStart(2, '0');
+    timerEl.textContent = `${mins}:${secs}`;
+});
+</script>
+
+</body>
+</html>
 
 .troll-card .close-btn:hover {
     background: #39ff14;
